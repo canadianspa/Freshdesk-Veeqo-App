@@ -1,4 +1,4 @@
-Adds Veeqo orders to a Freshdesk ticket by querying the Veeqo api using a ticket's email/postcode.
+Adds Veeqo orders to a Freshdesk ticket by querying the Veeqo api with the ticket's email/postcode.
 
 Created using the V2 Freshdesk app development kit.
 
