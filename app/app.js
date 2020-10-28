@@ -28,7 +28,7 @@ function onAppActivated(client) {
 
 async function getOrders(client, email) {
 	// USE IPARAMS <%= iparam.apiKey %>
-	var VEEQO_APIKEY = "xxxx";
+	var VEEQO_APIKEY = "xxxxxx";
 
 	var url = `${VEEQO_API_URL}?query=${email}`;
 
