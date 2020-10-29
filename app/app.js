@@ -1,6 +1,7 @@
 $(document).ready(() => {
 	app.initialized().then((_client) => {
 		var client = _client;
+		//client.instance.resize({ height: "400px" });
 
 		client.events.on("app.activated", onAppActivated(client));
 	});
@@ -14,12 +15,61 @@ function onAppActivated(client) {
 		.get("contact")
 		.then((data) => {
 			getOrders(client, data.contact.email).then((orders) => {
+				// Remove spinner
 				$("#wrapper").empty();
-				console.log(orders);
+
+				orders = orders.sort(
+					(a, b) => new Date(b.created_at) - new Date(a.created_at)
+				);
 
 				orders.forEach((order) => {
-					let html = `<a class="order" target="_blank" href="${VEEQO_APP_URL}/${order.id}">#P-${order.id}</a>`;
+					date = new Date(order.created_at);
+					year = date.getFullYear();
+					month = date.getMonth() + 1;
+					dt = date.getDate();
+
+					let itemsHTML = "";
+					order.line_items.forEach(
+						(item) =>
+							(itemsHTML += `
+								<div>${item.sellable.product_title}</div>
+								<div>${item.quantity}</div>
+						`)
+					);
+
+					let html = `
+						<div class="order">
+							<span>
+								<a target="_blank" href="${VEEQO_APP_URL}/${order.id}">#P-${order.id}</a>
+								<span>${dt + "/" + month + "/" + year}</span>
+								<i class="fa fa-angle-down arrow" style="font-size:24px"></i>
+							</span>
+							<div class="items">
+								<span>Item</span>
+								<span>Quantity</span>
+								${itemsHTML}
+							</div>
+						</div
+					`;
 					$("#wrapper").append(html);
+				});
+
+				$(".arrow").click(function () {
+					var arrow = $(this);
+					var items = $(this).parent().next();
+					if (items.hasClass("open")) {
+						items.removeClass("open");
+						arrow.removeClass("fa-angle-up");
+						arrow.addClass("fa-angle-down");
+					} else {
+						$(".items").removeClass("open");
+						$(".arrow").removeClass("fa-angle-up");
+						$(".arrow").addClass("fa-angle-down");
+						items.addClass("open");
+						arrow.removeClass("fa-angle-down");
+						arrow.addClass("fa-angle-up");
+						items.parent()[0].scrollIntoView(true);
+					}
 				});
 			});
 		})
@@ -28,7 +78,7 @@ function onAppActivated(client) {
 
 async function getOrders(client, email) {
 	// USE IPARAMS <%= iparam.apiKey %>
-	var VEEQO_APIKEY = "xxxxxx";
+	var VEEQO_APIKEY = "856db8e4037797f28c63d21a5359781a";
 
 	var url = `${VEEQO_API_URL}?query=${email}`;
 

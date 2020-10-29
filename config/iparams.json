@@ -1,7 +1,7 @@
 {
     "apiKey": {
-      "display_name": "FullContact API",
-      "description": "Please enter FullContact API key",
+      "display_name": "Veeqo API key",
+      "description": "Please enter your Veeqo API key",
       "type": "text",
       "required": true,
       "secure": true
