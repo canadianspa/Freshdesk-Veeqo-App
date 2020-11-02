@@ -53,9 +53,9 @@ html {
 }
 
 .expandable-menu.open {
-	margin-top: 8px;
+	margin: 8px 5px;
 	display: grid;
-	grid-template-columns: 0.7fr 0.3fr;
+	grid-template-columns: 0.65fr 0.35fr;
 	align-content: center;
 }
 

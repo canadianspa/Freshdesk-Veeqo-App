@@ -51,7 +51,7 @@ function HTMLBuilder(order, itemsHTML) {
 	var itemsHTML = order.line_items
 		.map(
 			(item) => `
-				<div>${item.sellable.product_title}</div>
+				<div>${item.sellable.sku_code}</div>
 				<div>${item.quantity}</div>
 			`
 		)
@@ -68,9 +68,16 @@ function HTMLBuilder(order, itemsHTML) {
 			</span>
 			<div class="expandable-menu common-border">
 				<span>Name</span>
-				<span>Postcode</span>
+				<span></span>
 				<div>
 					${order.deliver_to.first_name + " " + order.deliver_to.last_name}
+				</div>
+				<div>
+				</div>
+				<span>Address 1</span>
+				<span>Postcode</span>
+				<div>
+					${order.deliver_to.address1}
 				</div>
 				<div>
 					${order.deliver_to.zip}
@@ -104,7 +111,7 @@ function addMenuHandler() {
 
 async function getOrders(client, email) {
 	// USE IPARAMS <%= iparam.apiKey %>
-	var VEEQO_APIKEY = "856db8e4037797f28c63d21a5359781a";
+	var VEEQO_APIKEY = "xx";
 
 	var url = `${VEEQO_API_URL}?query=${email}`;
 
