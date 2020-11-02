@@ -111,11 +111,7 @@ function addMenuHandler() {
 
 async function getOrders(client, email) {
 	// USE IPARAMS <%= iparam.apiKey %>
-<<<<<<< HEAD
-	var VEEQO_APIKEY = "xx";
-=======
-	var VEEQO_APIKEY = "xxxx";
->>>>>>> a970b73fdb1225b43f87362ce6417aad83ae63f8
+	var VEEQO_APIKEY = "xxx";
 
 	var url = `${VEEQO_API_URL}?query=${email}`;
 
