@@ -1,61 +1,64 @@
-$(document).ready(() => {
-	app.initialized().then((_client) => {
-		var client = _client;
-
-		client.instance.resize({ height: "100px" });
-		client.events.on("app.activated", onAppActivated(client));
-	});
-});
-
 const VEEQO_APP_URL = "https://app.veeqo.com/orders";
 const VEEQO_API_URL = "https://api.veeqo.com/orders";
+const VEEQO_APIKEY = "856db8e4037797f28c63d21a5359781a";
+//const VEEQO_APIKEY = "<%= iparam.apiKey %>";
 
-function onAppActivated(client) {
-	client.data
-		.get("contact")
-		.then((data) => {
-			getOrders(client, data.contact.email).then((orders) => {
-				// Remove spinner
-				var wrapper = $("#wrapper");
-				wrapper.empty();
+function onAppActivated() {
+	fetchOrders().then(
+		function (orders) {
+			var wrapper = $("#wrapper");
+			wrapper.empty();
 
-				if (orders.length === 0) {
-					var html = `No orders found`;
+			if (orders.length === 0) {
+				$("<div/>")
+					.addClass("no-orders")
+					.text("No orders found.")
+					.appendTo(wrapper);
+			} else {
+				client.instance.resize({ height: "300px" });
+
+				orders = orders.sort(
+					(a, b) => new Date(b.created_at) - new Date(a.created_at)
+				);
+
+				orders.forEach((order) => {
+					var html = HTMLBuilder(order);
 					wrapper.append(html);
-				} else {
-					client.instance.resize({ height: "300px" });
+				});
 
-					orders = orders.sort(
-						(a, b) =>
-							new Date(b.created_at) - new Date(a.created_at)
-					);
-
-					orders.forEach((order) => {
-						var html = HTMLBuilder(order);
-						wrapper.append(html);
-					});
-
-					addMenuHandler();
-				}
-			});
-		})
-		.catch((e) => console.log("Exception - ", e));
+				addMenuListener();
+			}
+		},
+		function (error) {
+			console.error(error);
+			notifyError("Error fetching orders");
+		}
+	);
 }
 
-function HTMLBuilder(order, itemsHTML) {
-	date = new Date(order.created_at);
-	day = date.getDate();
-	month = date.getMonth() + 1;
-	year = date.getFullYear();
+function HTMLBuilder(orders) {
+	var date = new Date(order.created_at);
+	var day = date.getDate();
+	var month = date.getMonth() + 1;
+	var year = date.getFullYear();
 
-	var itemsHTML = order.line_items
-		.map(
-			(item) => `
-				<div>${item.sellable.sku_code}</div>
-				<div>${item.quantity}</div>
-			`
-		)
-		.join("");
+	var ordersHtml = orders.map((order) => {
+		var itemsHTML = order.line_items
+			.map((item) => $("<div/>").text(item.sellable.product_title))
+			.join("");
+	});
+
+	$.each(contactNames, function (i) {
+		var li = $("<li/>")
+			.addClass("list-group-item")
+			.attr("role", "menuitem")
+			.appendTo(contactsList);
+		$("<div/>").text(contactNames[i]).appendTo(li);
+		$("<div/>")
+			.text(contactPhones[i])
+			.addClass("contactPhone")
+			.appendTo(li);
+	});
 
 	return `
 		<div class="order">
@@ -66,31 +69,23 @@ function HTMLBuilder(order, itemsHTML) {
 				<span>${day + "/" + month + "/" + year}</span>
 				<i class="fa fa-angle-down arrow" style="font-size:24px"></i>
 			</span>
-			<div class="expandable-menu common-border">
-				<span>Name</span>
-				<span></span>
+			<div class="fw-content-list expandable-menu common-border">
+				<div class="muted">Address</div>
 				<div>
 					${order.deliver_to.first_name + " " + order.deliver_to.last_name}
-				</div>
-				<div>
-				</div>
-				<span>Address 1</span>
-				<span>Postcode</span>
-				<div>
+					<br/>
 					${order.deliver_to.address1}
-				</div>
-				<div>
+					<br/>
 					${order.deliver_to.zip}
 				</div>
-				<span>Item</span>
-				<span>Quantity</span>
+				<div class="muted">Item</div>
 				${itemsHTML}
 			</div>
 		</div>
 	`;
 }
 
-function addMenuHandler() {
+function addMenuListener() {
 	$(".arrow").click(function () {
 		var items = $(this).parent().next();
 		var arrow = $(this);
@@ -109,22 +104,52 @@ function addMenuHandler() {
 	});
 }
 
-async function getOrders(client, email) {
-	// USE IPARAMS <%= iparam.apiKey %>
-	var VEEQO_APIKEY = "xxx";
-
-	var url = `${VEEQO_API_URL}?query=${email}`;
-
-	var options = {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-			"x-api-key": VEEQO_APIKEY,
-		},
-	};
-
-	return await client.request.get(url, options).then(
-		(data) => JSON.parse(data.response),
-		(e) => console.log("Bad response - ", e)
-	);
+function notifyError(message) {
+	client.interface.trigger("showNotify", {
+		type: "alert",
+		message: message,
+	});
 }
+
+function fetchOrders() {
+	return new Promise(function (resolve, reject) {
+		client.data.get("contact").then(
+			function (data) {
+				const url = `${VEEQO_API_URL}?query=${data.contact.email}`;
+
+				var options = {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						"x-api-key": VEEQO_APIKEY,
+					},
+				};
+
+				client.request.get(url, options).then(
+					function (data) {
+						return resolve(JSON.parse(data.response));
+					},
+					function (error) {
+						console.error(error);
+						return reject(error);
+					}
+				);
+			},
+			function (error) {
+				console.error(error);
+				return reject(error);
+			}
+		);
+	});
+}
+
+function onDocumentReady() {
+	app.initialized().then((_client) => {
+		window.client = _client;
+
+		client.instance.resize({ height: "100px" });
+		client.events.on("app.activated", onAppActivated);
+	});
+}
+
+$(document).ready(onDocumentReady);
