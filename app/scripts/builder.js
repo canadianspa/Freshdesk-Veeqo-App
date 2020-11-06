@@ -9,11 +9,11 @@ function HTMLNoOrderBuilder(wrapper) {
 function HTMLOrderBuilder(order, wrapper) {
   // prettier-ignore
   const { 
-        first_name,
-        last_name,
-        address1, 
-        zip 
-    } = order.deliver_to;
+    first_name,
+    last_name,
+    address1, 
+    zip 
+  } = order.deliver_to;
 
   var div = $("<div/>").addClass("order");
 
@@ -47,8 +47,8 @@ function buildHeader(order, parent) {
 
   // prettier-ignore
   $("<span/>")
-        .text(datestring)
-        .appendTo(header);
+    .text(datestring)
+    .appendTo(header);
 
   $("<i/>")
     .addClass("fa fa-angle-down")
@@ -63,13 +63,13 @@ function buildMenuItem(header, text, parent) {
   if (header) {
     // prettier-ignore
     $("<div/>")
-            .addClass("muted")
-            .text(header)
-            .appendTo(parent);
+        .addClass("muted")
+        .text(header)
+        .appendTo(parent);
   }
 
   // prettier-ignore
   $("<div/>")
-        .text(text)
-        .appendTo(parent);
+    .text(text)
+    .appendTo(parent);
 }
