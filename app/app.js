@@ -1,7 +1,6 @@
 const VEEQO_APP_URL = "https://app.veeqo.com/orders";
 const VEEQO_API_URL = "https://api.veeqo.com/orders";
-//const VEEQO_APIKEY = "<%= iparam.apiKey %>";
-const VEEQO_APIKEY = "856db8e4037797f28c63d21a5359781a";
+const VEEQO_APIKEY = "<%= iparam.apiKey %>";
 
 function fetchOrders() {
   return new Promise(function (resolve, reject) {
