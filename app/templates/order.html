@@ -1,11 +1,9 @@
-<script type="text/html" id="orderTemplate">
-  <div data-content="name" class="header"></div>
-  <div data-content="status" class="status"></div>
-  <div class="muted">Created At</div>
-  <div data-content="date"></div>
+<script type="text/x-jquery-tmpl">
+  <div class="header">${name}</div>
+  <div class="status">${status}</div>
   <div class="muted">Items</div>
   <div id="items"></div>
-  <div data-content="total" class="header"></div>
+  <div class="header">${total}</div>
   <div class="muted">Shipping Address</div>
-  <div data-content="address"></div>
+  <div>${address}</div>
 </script>

@@ -1,5 +1,7 @@
-<script type="text/html" id="itemTemplate">
-  <div data-content="title"></div>
-  <div data-content="sku" class="indent muted"></div>
-  <div data-content="price" class="indent muted"></div>
+<script id="itemTemplate" type="text/x-jquery-tmpl">
+  <div class="ellipsis">${title}</div>
+  <div class="item-details">
+    <span class="muted">${sku}</span>
+    <span class="muted">${price}</span>
+  </div>
 </script>

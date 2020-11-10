@@ -1,62 +1,16 @@
-const VEEQO_APP_URL = "https://app.veeqo.com/orders";
-const VEEQO_API_URL = "https://api.veeqo.com/orders";
-//const VEEQO_APIKEY = "<%= iparam.apiKey %>";
-const VEEQO_APIKEY = "856db8e4037797f28c63d21a5359781a";
-
-function fetchOrders() {
-  return new Promise(function (resolve, reject) {
-    client.data.get("contact").then(
-      function (data) {
-        const url = `${VEEQO_API_URL}?query=${data.contact.email}`;
-
-        var options = {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": VEEQO_APIKEY,
-          },
-        };
-
-        client.request.get(url, options).then(
-          function (data) {
-            return resolve(JSON.parse(data.response));
-          },
-          function (error) {
-            console.error(error);
-            return reject(error);
-          }
-        );
-      },
-      function (error) {
-        console.error(error);
-        return reject(error);
-      }
-    );
-  });
-}
-
 function onAppActivated() {
   fetchOrders().then(
     function (orders) {
-      $(".spinner").remove();
+      removeSpinner();
 
-      if (orders.length > 0) {
-        $("#router").css("display", "block");
-
-        client.instance.resize({ height: "300px" });
-
-        state.orders = sortByDate(orders);
-        var order = state.orders[state.currentIndex];
-
-        var indicator = $(".indicator");
-        for (const order in state.orders) {
-          $("<div/>").appendTo(indicator);
-        }
-
-        buildOrder(order);
-        addEventListeners();
-      } else {
+      if (orders.length === 0) {
         buildNoOrders();
+      } else {
+        resize(client, "300px");
+        state.orders = sortByDate(orders);
+
+        buildNavigation(state.orders);
+        buildOrder(state.orders[state.currentIndex]);
       }
     },
     function (error) {
@@ -65,37 +19,51 @@ function onAppActivated() {
   );
 }
 
-function addEventListeners() {
-  arrowClickListener();
+function handleNavigation(direction) {
+  var idx = state.currentIndex + direction;
+  if (idx >= 0 && idx < state.orders.length) {
+    state.currentIndex = idx;
+    buildOrder(state.orders[idx]);
+  }
 }
 
-function arrowClickListener() {
-  $(".fa").click(function () {
-    var i = $(this).hasClass("fa-angle-left")
-      ? state.currentIndex - 1
-      : state.currentIndex + 1;
-
-    if (i >= 0 && i < state.orders.length) {
-      state.currentIndex = i;
-      buildOrder(state.orders[i]);
-    }
+function loadTemplate(name) {
+  $.get(`./templates/${name}.html`, function (template) {
+    state.templates[name] = $.parseHTML(template);
   });
 }
 
-function sortByDate(orders) {
-  return orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+function addEventListeners() {
+  $("#button-right").click(function () {
+    handleNavigation(1);
+  });
+
+  $("#button-left").click(function () {
+    handleNavigation(-1);
+  });
 }
 
 function onDocumentReady() {
-  app.initialized().then((_client) => {
-    window.client = _client;
+  app.initialized().then(
+    (_client) => {
+      resize(_client, "100px");
+      addEventListeners();
 
-    window.state = {};
-    state.currentIndex = 0;
+      window.client = _client;
+      window.state = {};
 
-    _client.instance.resize({ height: "100px" });
-    _client.events.on("app.activated", onAppActivated);
-  });
+      state.currentIndex = 0;
+      state.templates = {};
+
+      loadTemplate("order");
+      loadTemplate("item");
+
+      _client.events.on("app.activated", onAppActivated);
+    },
+    function (error) {
+      console.error(error);
+    }
+  );
 }
 
 $(document).ready(onDocumentReady);
