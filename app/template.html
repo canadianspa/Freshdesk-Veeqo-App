@@ -1,24 +1,44 @@
 <html>
-	<head>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-		<script src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
-		<script src="https://momentjs.com/downloads/moment.min.js"></script>
-		<script src="./scripts/builder.js"></script>
-		<script src="app.js"></script>
-		<link rel="stylesheet" type="text/css" href="style.css" />
-		<link
-			rel="stylesheet"
-			type="text/css"
-			href="https://static.freshdev.io/fdk/2.0/assets/freshdesk.css"
-		/>
-		<link 
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-		/>
-	</head>
-	<body>
-		<div class="fw-widget-wrapper">
-			<div class="spinner"></div>
-		</div>
-	</body>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
+    <script src="./plugins/moment.js"></script>
+    <script src="./plugins/jquery.loadTemplate.js"></script>
+    <script src="./scripts/builder.js"></script>
+    <script src="app.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://static.freshdev.io/fdk/2.0/assets/freshdesk.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+  <body>
+    <div class="fw-widget-wrapper">
+      <div class="fw-content-list">
+        <div class="spinner"></div>
+        <div id="router">
+          <div class="indicator"></div>
+          <div class="navigator">
+            <button class="fa fa-angle-left"></button>
+            <a id="header"></a>
+            <button class="fa fa-angle-right"></button>
+          </div>
+        </div>
+        <div id="container"></div>
+        <div>
+          <div id="order-template-container"></div>
+          <div id="item-template-container"></div>
+          <script>
+            $("#order-template-container").load("./templates/order.html");
+            $("#item-template-container").load("./templates/item.html");
+          </script>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

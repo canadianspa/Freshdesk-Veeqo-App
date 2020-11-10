@@ -1,6 +1,7 @@
 const VEEQO_APP_URL = "https://app.veeqo.com/orders";
 const VEEQO_API_URL = "https://api.veeqo.com/orders";
-const VEEQO_APIKEY = "<%= iparam.apiKey %>";
+//const VEEQO_APIKEY = "<%= iparam.apiKey %>";
+const VEEQO_APIKEY = "856db8e4037797f28c63d21a5359781a";
 
 function fetchOrders() {
   return new Promise(function (resolve, reject) {
@@ -37,20 +38,25 @@ function fetchOrders() {
 function onAppActivated() {
   fetchOrders().then(
     function (orders) {
-      var wrapper = $(".fw-widget-wrapper");
-      wrapper.empty();
+      $(".spinner").remove();
 
       if (orders.length > 0) {
-        resizeClient("250px");
-        orders = sortByDate(orders);
+        $("#router").css("display", "block");
 
-        $.map(orders, function (order) {
-          HTMLOrderBuilder(order, wrapper);
-        });
+        client.instance.resize({ height: "300px" });
 
-        addMenuListener();
+        state.orders = sortByDate(orders);
+        var order = state.orders[state.currentIndex];
+
+        var indicator = $(".indicator");
+        for (const order in state.orders) {
+          $("<div/>").appendTo(indicator);
+        }
+
+        buildOrder(order);
+        addEventListeners();
       } else {
-        HTMLNoOrderBuilder(wrapper);
+        buildNoOrders();
       }
     },
     function (error) {
@@ -59,24 +65,19 @@ function onAppActivated() {
   );
 }
 
-function addMenuListener() {
-  $(".arrow").click(function () {
-    var order = $(this).parent().parent();
-    var arrow = $(this);
-    var items = order.find(".expandable-menu");
+function addEventListeners() {
+  arrowClickListener();
+}
 
-    if (items.hasClass("open")) {
-      items.removeClass("open");
-      arrow.toggleClass("fa-angle-up fa-angle-down");
-    } else {
-      $(".expandable-menu").removeClass("open");
-      $(".arrow").removeClass("fa-angle-up");
-      $(".arrow").addClass("fa-angle-down");
+function arrowClickListener() {
+  $(".fa").click(function () {
+    var i = $(this).hasClass("fa-angle-left")
+      ? state.currentIndex - 1
+      : state.currentIndex + 1;
 
-      items.addClass("open");
-      arrow.toggleClass("fa-angle-up fa-angle-down");
-
-      order[0].scrollIntoView(true);
+    if (i >= 0 && i < state.orders.length) {
+      state.currentIndex = i;
+      buildOrder(state.orders[i]);
     }
   });
 }
@@ -85,15 +86,14 @@ function sortByDate(orders) {
   return orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 
-function resizeClient(height) {
-  client.instance.resize({ height: height });
-}
-
 function onDocumentReady() {
   app.initialized().then((_client) => {
     window.client = _client;
 
-    resizeClient("100px");
+    window.state = {};
+    state.currentIndex = 0;
+
+    _client.instance.resize({ height: "100px" });
     _client.events.on("app.activated", onAppActivated);
   });
 }

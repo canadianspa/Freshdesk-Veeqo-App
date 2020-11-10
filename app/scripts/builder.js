@@ -1,75 +1,53 @@
-function HTMLNoOrderBuilder(wrapper) {
-  $("<div/>")
-    .addClass("muted")
-    .addClass("no-orders")
-    .text("No orders found")
-    .appendTo(wrapper);
+function buildNoOrders() {
+  $("#container").addClass("muted centre").text("No orders found");
 }
 
-function HTMLOrderBuilder(order, wrapper) {
-  // prettier-ignore
-  const { 
-    first_name,
-    last_name,
-    address1, 
-    zip 
-  } = order.deliver_to;
+function buildOrder(order) {
+  var container = $("#container");
+  container.empty();
 
-  var div = $("<div/>").addClass("order");
+  const {
+    id,
+    number,
+    status,
+    created_at,
+    currency_code,
+    deliver_to,
+    total_price,
+    line_items,
+  } = order;
 
-  buildHeader(order, div);
+  updateHeader(number, id);
 
-  var menu = $("<div/>").addClass("fw-content-list expandable-menu");
+  var orderData = {
+    name: `${deliver_to.first_name} ${deliver_to.last_name}`,
+    status: status,
+    total: `${to2Dp(total_price)} ${currency_code}`,
+    post: "This is the contents of my post",
+    address: `${deliver_to.address1}, ${deliver_to.zip}, ${deliver_to.country}`,
+    date: moment(created_at).format("DD/MM/YYYY"),
+  };
 
-  buildMenuItem("Name", `${first_name} ${last_name}`, menu);
-  buildMenuItem("Address", `${address1}, ${zip}`, menu);
+  container.loadTemplate($("#orderTemplate"), orderData);
 
-  $.map(order.line_items, function (item, index) {
-    buildMenuItem(index === 0 && "Items", item.sellable.product_title, menu);
+  $.map(line_items, function (item) {
+    var itemData = {
+      title: `${item.quantity} x ${item.sellable.product_title}`,
+      price: `${to2Dp(item.price_per_unit)}`,
+      sku: item.sellable.sku_code,
+    };
+
+    $("#items").loadTemplate($("#itemTemplate"), itemData, { append: true });
   });
-
-  menu.appendTo(div);
-  div.appendTo(wrapper);
 }
 
-function buildHeader(order, parent) {
-  const { id, created_at } = order;
-
-  var header = $("<span/>");
-
-  $("<a/>")
-    .text(`#P-${id}`)
-    .attr("target", "_blank")
-    .attr("href", `${VEEQO_APP_URL}/${id}`)
-    .appendTo(header);
-
-  var datestring = moment(created_at).format("DD/MM/YYYY");
-
-  // prettier-ignore
-  $("<span/>")
-    .text(datestring)
-    .appendTo(header);
-
-  $("<i/>")
-    .addClass("fa fa-angle-down")
-    .addClass("arrow")
-    .attr("style", "font-size:24px")
-    .appendTo(header);
-
-  header.appendTo(parent);
-}
-
-function buildMenuItem(header, text, parent) {
-  if (header) {
-    // prettier-ignore
-    $("<div/>")
-        .addClass("muted")
-        .text(header)
-        .appendTo(parent);
-  }
-
-  // prettier-ignore
-  $("<div/>")
+function updateHeader(text, id) {
+  $("#header")
     .text(text)
-    .appendTo(parent);
+    .attr("target", "_blank")
+    .attr("href", `${VEEQO_APP_URL}/${id}`);
+}
+
+function to2Dp(float) {
+  return Number(float).toFixed(2);
 }
