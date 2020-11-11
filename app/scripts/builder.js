@@ -4,7 +4,6 @@ function removeSpinner() {
 
 function buildNavigation(orders) {
   $("#nav-container").addClass("visible");
-
   $("#indicator").append(
     $.map(orders, function () {
       return $("<div/>");
@@ -12,29 +11,21 @@ function buildNavigation(orders) {
   );
 }
 
-// prettier-ignore
 function buildNoOrders() {
-  $("#order-container")
-    .addClass("muted")
-    .addClass("centre")
-    .text("No orders found");
+  $("#orders-not-found").addClass("visible");
 }
 
 function buildOrder(order) {
   const { number, id, line_items } = order;
 
+  var orderTmpl = $("#orderTemplate").tmpl(formatOrder(order));
+  var itemsTmpls = $("#itemTemplate").tmpl(formatItems(line_items));
+
   updateHeader(number, id);
   updateIndicator(state.currentIndex);
 
-  var orderTmpl = $(state.templates.order).tmpl(formatOrder(order));
-  var itemsTmpls = $(state.templates.item).tmpl(formatItems(line_items));
-
-  var container = $("#order-container");
-  container.empty();
-  container.append(orderTmpl);
-
-  var items = $("#items");
-  items.append(itemsTmpls);
+  $("#order-container").empty().append(orderTmpl);
+  $("#items").append(itemsTmpls);
 }
 
 function updateHeader(text, id) {
@@ -47,7 +38,7 @@ function updateHeader(text, id) {
 function updateIndicator(idx) {
   $("#indicator")
     .children()
-    .removeClass("selected-indicator")
+    .removeClass("selected")
     .eq(idx)
-    .addClass("selected-indicator");
+    .addClass("selected");
 }

@@ -3,6 +3,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
     <script src="https://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script src="./templates/loader.js"></script>
     <script src="./scripts/api.js"></script>
     <script src="./scripts/utils.js"></script>
     <script src="./scripts/builder.js"></script>
@@ -16,22 +17,23 @@
   </head>
   <body>
     <div class="fw-widget-wrapper">
-      <div class="fw-content-list">
-        <div class="spinner"></div>
-        <div id="nav-container">
-          <div id="indicator"></div>
-          <div class="navigator">
-            <button id="button-left">
-              <i class="arrow left"></i>
-            </button>
-            <a id="header"></a>
-            <button id="button-right">
-              <i class="arrow right"></i>
-            </button>
-          </div>
+      <div id="nav-container">
+        <div id="indicator"></div>
+        <div class="navigator">
+          <button id="button-left">
+            <i class="arrow left"></i>
+          </button>
+          <a id="header"></a>
+          <button id="button-right">
+            <i class="arrow right"></i>
+          </button>
         </div>
-        <div id="order-container"></div>
       </div>
+      <div class="spinner centre"></div>
+      <div id="orders-not-found" class="muted centre">No orders found</div>
+      <div id="order-container"></div>
+      <div id="order-template-container"></div>
+      <div id="item-template-container"></div>
     </div>
   </body>
 </html>

@@ -1,36 +1,22 @@
-function onAppActivated() {
-  fetchOrders().then(
-    function (orders) {
-      removeSpinner();
+function handleOrders(orders) {
+  state.orders = orders;
 
-      if (orders.length === 0) {
-        buildNoOrders();
-      } else {
-        resize(client, "300px");
-        state.orders = sortByDate(orders);
+  if (orders.length > 0) {
+    resize(client, "300px");
 
-        buildNavigation(state.orders);
-        buildOrder(state.orders[state.currentIndex]);
-      }
-    },
-    function (error) {
-      console.error(error);
-    }
-  );
-}
-
-function handleNavigation(direction) {
-  var idx = state.currentIndex + direction;
-  if (idx >= 0 && idx < state.orders.length) {
-    state.currentIndex = idx;
-    buildOrder(state.orders[idx]);
+    buildNavigation(orders);
+    buildOrder(orders[state.currentIndex]);
+  } else {
+    buildNoOrders();
   }
 }
 
-function loadTemplate(name) {
-  $.get(`./templates/${name}.html`, function (template) {
-    state.templates[name] = $.parseHTML(template);
-  });
+function handleNavigation(direction) {
+  var i = state.currentIndex + direction;
+  if (i >= 0 && i < state.orders.length) {
+    state.currentIndex = i;
+    buildOrder(state.orders[i]);
+  }
 }
 
 function addEventListeners() {
@@ -43,20 +29,32 @@ function addEventListeners() {
   });
 }
 
+function onAppActivated() {
+  // Disable re-rendering when open/closed
+  if (state.orders === undefined) {
+    fetchOrders().then(
+      function (orders) {
+        orders = sortByDate(orders);
+        removeSpinner();
+
+        handleOrders(orders);
+      },
+      function (error) {
+        console.error(error);
+      }
+    );
+  }
+}
+
 function onDocumentReady() {
   app.initialized().then(
-    (_client) => {
-      resize(_client, "100px");
+    function (_client) {
+      resize(_client, "80px");
       addEventListeners();
 
       window.client = _client;
       window.state = {};
-
       state.currentIndex = 0;
-      state.templates = {};
-
-      loadTemplate("order");
-      loadTemplate("item");
 
       _client.events.on("app.activated", onAppActivated);
     },
