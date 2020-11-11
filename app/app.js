@@ -30,17 +30,22 @@ function addEventListeners() {
 }
 
 function onAppActivated() {
-  // Disable re-rendering when open/closed
+  if (state.error) {
+    // Remove previous error
+    state.error = false;
+    removeError();
+  }
+  // Only executed on initial call/after error
   if (state.orders === undefined) {
     fetchOrders().then(
       function (orders) {
-        orders = sortByDate(orders);
         removeSpinner();
 
+        orders = sortByDate(orders);
         handleOrders(orders);
       },
       function (error) {
-        console.error(error);
+        handleError(error);
       }
     );
   }
@@ -59,9 +64,17 @@ function onDocumentReady() {
       _client.events.on("app.activated", onAppActivated);
     },
     function (error) {
-      console.error(error);
+      handleError(error);
     }
   );
+}
+
+function handleError(error) {
+  state.error = true;
+
+  removeSpinner();
+  buildError();
+  console.error(error);
 }
 
 $(document).ready(onDocumentReady);

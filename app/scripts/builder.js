@@ -1,9 +1,24 @@
 function removeSpinner() {
-  $(".spinner").remove();
+  $(".spinner").hide();
+}
+
+function removeError() {
+  $(".error").remove();
+  $(".spinner").show();
+}
+
+// prettier-ignore
+function buildError() {
+  var err = $("<div/>")
+    .addClass("muted error")
+    .text(errorMsg);
+
+  $(".fw-widget-wrapper").append(err);
 }
 
 function buildNavigation(orders) {
   $("#nav-container").addClass("visible");
+
   $("#indicator").append(
     $.map(orders, function () {
       return $("<div/>");
@@ -11,8 +26,14 @@ function buildNavigation(orders) {
   );
 }
 
+// prettier-ignore
 function buildNoOrders() {
-  $("#orders-not-found").addClass("visible");
+  var div = $("<div/>")
+    .addClass("muted")
+    .addClass("centre")
+    .text(noOrdersMsg);
+
+  $("#order-container").append(div);
 }
 
 function buildOrder(order) {

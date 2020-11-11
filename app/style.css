@@ -10,6 +10,11 @@
   background-color: #5a636b !important;
 }
 
+.error {
+  margin: 20px auto 0 auto;
+  text-align: center;
+}
+
 /* Navigation initially hidden */
 #nav-container {
   display: none;
@@ -66,14 +71,11 @@
   color: #37424d;
 }
 
-#orders-not-found {
-  display: none;
-}
-
 .item-details {
   display: flex;
   justify-content: space-between;
   margin-left: 30px;
+  margin-right: 10px;
 }
 
 /* Text styling */
@@ -107,7 +109,7 @@
 }
 
 .centre {
-  margin: 30px auto;
+  margin: 30px auto 0 auto;
   text-align: center;
 }
 
