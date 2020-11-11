@@ -9,16 +9,15 @@ function removeError() {
 
 // prettier-ignore
 function buildError() {
-  var err = $("<div/>")
+  var wrapper = $(".fw-widget-wrapper")
+  $("<div/>")
     .addClass("muted error")
-    .text(errorMsg);
-
-  $(".fw-widget-wrapper").append(err);
+    .text(errorMsg)
+    .appendTo(wrapper)
 }
 
 function buildNavigation(orders) {
-  $("#nav-container").addClass("visible");
-
+  $("#nav-container").show();
   $("#indicator").append(
     $.map(orders, function () {
       return $("<div/>");
@@ -26,14 +25,13 @@ function buildNavigation(orders) {
   );
 }
 
-// prettier-ignore
 function buildNoOrders() {
-  var div = $("<div/>")
+  var container = $("#order-container");
+  $("<div/>")
     .addClass("muted")
     .addClass("centre")
-    .text(noOrdersMsg);
-
-  $("#order-container").append(div);
+    .text(noOrdersMsg)
+    .appendTo(container);
 }
 
 function buildOrder(order) {

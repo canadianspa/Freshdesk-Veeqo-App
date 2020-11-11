@@ -2,10 +2,6 @@
   margin: 0;
 }
 
-.visible {
-  display: block !important;
-}
-
 .selected {
   background-color: #5a636b !important;
 }
