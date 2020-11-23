@@ -3,7 +3,7 @@
 }
 
 .selected {
-  background-color: #5a636b !important;
+  background-color: #2f373d !important;
 }
 
 .error {
@@ -27,7 +27,19 @@
   width: 16px;
   margin-left: 3px;
   margin-right: 3px;
-  background-color: #ddd;
+  background-color: #bbbbbb;
+}
+
+.link a {
+  color: #2c5cc5 !important;
+  margin-right: 17px;
+}
+
+.link img {
+  height: 11px;
+  width: 11px;
+  margin-bottom: 4px;
+  margin-right: 4px;
 }
 
 .navigator {
