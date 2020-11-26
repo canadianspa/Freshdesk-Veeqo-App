@@ -2,8 +2,6 @@ function handleOrders(orders) {
   state.orders = orders;
 
   if (orders.length > 0) {
-    resize(client, "300px");
-
     buildNavigation(orders);
     buildOrder(orders[state.currentIndex]);
   } else {

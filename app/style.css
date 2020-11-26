@@ -61,7 +61,6 @@
 }
 
 #order-container {
-  max-height: 268px;
   overflow-y: auto;
 }
 
