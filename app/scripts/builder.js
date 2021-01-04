@@ -40,7 +40,7 @@ function buildOrder(order) {
   if (line_items.length === 1) {
     resizeContainer(260);
   } else if (line_items.length === 2) {
-    resizeContainer(290);
+    resizeContainer(295);
   } else {
     resizeContainer(325);
   }
